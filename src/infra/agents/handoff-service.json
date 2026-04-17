@@ -1,5 +1,5 @@
 {
-  "description": "Zava Handoff Service Agent ",
+  "description": "Zava Handoff Service Agent",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",

@@ -1,5 +1,5 @@
 {
-  "description": "Zava Interior Design Agent ",
+  "description": "Zava Interior Design Agent",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",

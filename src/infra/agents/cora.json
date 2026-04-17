@@ -1,5 +1,5 @@
 {
-  "description": "Cora - Zava Shopping Assistant ",
+  "description": "Cora - Zava Shopping Assistant",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",
