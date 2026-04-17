@@ -25,3 +25,5 @@ Rules:
 - Detect explicit requests to "talk to someone else" or "get help with X" as domain changes
 - Consider context: if discussing design, stay in interior_designer unless user explicitly changes topic
 - Default to 'cora' for general/ambiguous queries
+
+

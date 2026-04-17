@@ -32,18 +32,18 @@ jobs:
         with:
           creds: '{"clientId":"${{ env.AZURE_CLIENT_ID }}","clientSecret":"${{ env.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ env.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ env.AZURE_TENANT_ID }}"}'
 
-      - name: JSON-escape prompt instructions
-        id: escape
+      - name: Build agent payload
         run: |
-          ESCAPED=$(python3 -c "import json; print(json.dumps(open('src/prompts/ShopperAgentPrompt.txt').read()))")
-          echo "instructions=${ESCAPED}" >> "$GITHUB_OUTPUT"
-
-      - name: Substitute placeholders in agent definition
-        run: |
-          jq --arg model "${{ env.GPT_DEPLOYMENT }}" \
-             --argjson instructions '${{ steps.escape.outputs.instructions }}' \
-             '.definition.model = $model | .definition.instructions = $instructions' \
-             src/infra/agents/cora.json > /tmp/agent-payload.json
+          python3 -c "
+          import json, os
+          instructions = open('src/prompts/ShopperAgentPrompt.txt').read()
+          with open('src/infra/agents/cora.json') as f:
+              payload = json.load(f)
+          payload['definition']['model'] = os.environ['GPT_DEPLOYMENT']
+          payload['definition']['instructions'] = instructions
+          with open('/tmp/agent-payload.json', 'w') as f:
+              json.dump(payload, f, indent=2)
+          "
           cat /tmp/agent-payload.json
 
       - name: Deploy agent version to Foundry
