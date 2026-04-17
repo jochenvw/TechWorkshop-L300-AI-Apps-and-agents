@@ -22,14 +22,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Parse ENV secret into individual environment variables
+      - name: Load ENV secret
+        run: |
+          while IFS='=' read -r key value; do
+            [ -z "$key" ] && continue
+            echo "::add-mask::$value"
+            echo "$key=$value" >> "$GITHUB_ENV"
+          done <<< "${{ secrets.ENV }}"
+
       # Login to Azure using service principal credentials
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ env.AZURE_CLIENT_SECRET }}
 
       # Build & push with src/ as the build context (ONLY files in src are sent to Docker)
       - name: Build and Push image to ACR
@@ -49,7 +58,7 @@ jobs:
             --resource-group "${{ env.RESOURCE_GROUP }}" \
             --image "$IMAGE" \
             --set-env-vars \
-              FOUNDRY_ENDPOINT="${{ secrets.FOUNDRY_ENDPOINT }}" \
-              gpt_endpoint="${{ secrets.gpt_endpoint }}" \
-              embedding_endpoint="${{ secrets.embedding_endpoint }}" \
-              phi_4_endpoint="${{ secrets.phi_4_endpoint }}"
+              FOUNDRY_ENDPOINT="${{ env.FOUNDRY_ENDPOINT }}" \
+              gpt_endpoint="${{ env.GPT_ENDPOINT }}" \
+              embedding_endpoint="${{ env.EMBEDDING_ENDPOINT }}" \
+              phi_4_endpoint="${{ env.PHI_4_ENDPOINT }}"
