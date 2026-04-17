@@ -1,5 +1,5 @@
 {
-  "description": "Zava Customer Loyalty Agent",
+  "description": "Zava Customer Loyalty Agent ",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",
