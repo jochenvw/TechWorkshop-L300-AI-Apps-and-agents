@@ -1,0 +1,54 @@
+name: Build, Push, Deploy (Azure Container Apps)
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_LOGIN_SERVER: kfnrynfw4y5lmcosureg.azurecr.io
+  ACR_REPOSITORY: chat-app
+  CONTAINERAPP_NAME: kfnrynfw4y5lm-cosu-cae
+  RESOURCE_GROUP: rg-nl-stu-jvw-mandatory-course
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # OIDC login to Azure (no client secret needed)
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Build & push with src/ as the build context (ONLY files in src are sent to Docker)
+      - name: Build and Push image to ACR
+        run: |
+          az acr login --name "${{ env.ACR_LOGIN_SERVER }}"
+          IMAGE="${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ github.sha }}"
+          docker build -f Dockerfile -t "$IMAGE" .
+          docker push "$IMAGE"
+        working-directory: src
+
+      - name: Deploy to Azure Container App (set env vars + image)
+        run: |
+          IMAGE="${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ github.sha }}"
+
+          az containerapp update \
+            --name "${{ env.CONTAINERAPP_NAME }}" \
+            --resource-group "${{ env.RESOURCE_GROUP }}" \
+            --image "$IMAGE" \
+            --set-env-vars \
+              FOUNDRY_ENDPOINT="${{ secrets.FOUNDRY_ENDPOINT }}" \
+              gpt_endpoint="${{ secrets.gpt_endpoint }}" \
+              embedding_endpoint="${{ secrets.embedding_endpoint }}" \
+              phi_4_endpoint="${{ secrets.phi_4_endpoint }}"
