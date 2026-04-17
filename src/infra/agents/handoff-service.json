@@ -1,5 +1,5 @@
 {
-  "description": "Zava Handoff Service Agent",
+  "description": "Zava Handoff Service Agent ",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",
@@ -29,7 +29,12 @@
               "description": "Brief explanation of the classification decision"
             }
           },
-          "required": ["domain", "is_domain_change", "confidence", "reasoning"],
+          "required": [
+            "domain",
+            "is_domain_change",
+            "confidence",
+            "reasoning"
+          ],
           "additionalProperties": false
         }
       }

@@ -1,5 +1,5 @@
 {
-  "description": "Zava Customer Loyalty Agent",
+  "description": "Zava Customer Loyalty Agent ",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",
@@ -17,7 +17,9 @@
               "description": "The customer's unique identifier"
             }
           },
-          "required": ["customer_id"]
+          "required": [
+            "customer_id"
+          ]
         }
       }
     ]

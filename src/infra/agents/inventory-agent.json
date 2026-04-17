@@ -1,5 +1,5 @@
 {
-  "description": "Zava Inventory Agent",
+  "description": "Zava Inventory Agent ",
   "definition": {
     "kind": "prompt",
     "model": "${GPT_DEPLOYMENT}",
@@ -14,11 +14,15 @@
           "properties": {
             "product_list": {
               "type": "array",
-              "items": { "type": "string" },
+              "items": {
+                "type": "string"
+              },
               "description": "List of product IDs to check inventory for."
             }
           },
-          "required": ["product_list"]
+          "required": [
+            "product_list"
+          ]
         }
       }
     ]
